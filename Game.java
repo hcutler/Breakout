@@ -142,6 +142,11 @@ public class Game implements Runnable {
 		
 		reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				blocksLeft = 170;
+				lives = 3;
+				score = 0;
+				
 				court.reset();
 			}
 		});
