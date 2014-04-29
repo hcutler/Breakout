@@ -7,7 +7,7 @@ public class Paddle extends Square {
 
 	//private int paddleWidth;
 	//private int paddleHeight;
-	Color c = Color.BLACK;
+	Color c = Color.LIGHT_GRAY;
 	
 	
 	public Paddle(int courtWidth, int courtHeight, int paddleWidth, int paddleHeight) {
@@ -15,10 +15,10 @@ public class Paddle extends Square {
 		super(courtWidth, courtHeight, paddleWidth, paddleHeight);
 		// TODO Auto-generated constructor stub
 		
-//		this.paddleWidth = paddleWidth;
-//		this.paddleHeight = paddleHeight;
+		//this.paddleWidth = paddleWidth;
+		//this.paddleHeight = paddleHeight;
 	
-		//this.width = paddleWidth;
+//		this.width = paddleWidth;
 		//this.height = paddleHeight;
 	}
 	
