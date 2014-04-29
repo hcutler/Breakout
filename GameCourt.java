@@ -265,9 +265,6 @@ public class GameCourt extends JPanel {
 	
 			}
 			
-			
-			
-
 			// when active object true,second ball has same properties as first
 			// ball
 			// if (secondBallActive == true) {
@@ -313,9 +310,9 @@ public class GameCourt extends JPanel {
 		snitch.draw(g);
 
 
-		if (secondBallActive == true) {
-			snitch2.draw(g);
-		}
+//		if (secondBallActive == true) {
+//			snitch2.draw(g);
+//		}
 
 		for (Brick brick : bricks) {
 			brick.draw(g);
