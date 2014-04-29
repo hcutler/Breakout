@@ -142,7 +142,7 @@ public class GameCourt extends JPanel {
 	 */
 	public void reset() {
 
-		paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 60, 20); // set width and
+		paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 80, 20); // set width and
 																// height!
 		// poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Ball(COURT_WIDTH, COURT_HEIGHT);
