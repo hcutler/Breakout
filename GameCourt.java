@@ -143,16 +143,15 @@ public class GameCourt extends JPanel {
 	 */
 	public void reset() {
 
-		paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 100, 30); // set width and
-																// height!
+		paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 100, 30); // set width
+																	// and
+																	// height!
 		image = new Background(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Ball(COURT_WIDTH, COURT_HEIGHT);
 
-		
-		
-//		if (secondBallActive == true) {
-//			snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
-//		}
+		// if (secondBallActive == true) {
+		// snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
+		// }
 
 		playing = true;
 		status.setText("Game in progress...");
@@ -177,7 +176,6 @@ public class GameCourt extends JPanel {
 			paddle.move();
 			snitch.move();
 
-
 			if (snitch.hitWall() != Direction.DOWN) {
 				// make the snitch bounce off walls...
 				snitch.bounce(snitch.hitWall());
@@ -190,12 +188,11 @@ public class GameCourt extends JPanel {
 				// reset position here
 				snitch.resetBallPosition();
 
-
 			}
 
-//			if (paddle.willIntersect(snitch)) {
-//				willIntersect = true;
-//			}
+			// if (paddle.willIntersect(snitch)) {
+			// willIntersect = true;
+			// }
 
 			// check for the game end conditions
 			// if (paddle.intersects(snitch) && willIntersect) {
@@ -203,7 +200,6 @@ public class GameCourt extends JPanel {
 				snitch.bounce(snitch.hitObj(paddle));
 				// willIntersect = false;
 			}
-
 
 			// temporary brick
 			Brick brickToBeRemoved = null;
@@ -219,15 +215,12 @@ public class GameCourt extends JPanel {
 			if (brickToBeRemoved != null) {
 				bricks.remove(brickToBeRemoved);
 			}
-			
-			
-			
-			
+
 			while (secondBallActive) {
-				//create 2nd ball
+				// create 2nd ball
 				snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
-				
-				//while active, do same thing for second ball
+
+				// while active, do same thing for second ball
 				paddle.move();
 				snitch2.move();
 
@@ -257,14 +250,12 @@ public class GameCourt extends JPanel {
 						Game.score += 10;
 						Game.blocksLeft -= 1;
 					}
-
 				}
 				if (brickToBeRemoved != null) {
 					bricks.remove(brickToBeRemoved);
 				}
-	
 			}
-			
+
 			// when active object true,second ball has same properties as first
 			// ball
 			// if (secondBallActive == true) {
@@ -309,10 +300,9 @@ public class GameCourt extends JPanel {
 		paddle.draw(g);
 		snitch.draw(g);
 
-
-//		if (secondBallActive == true) {
-//			snitch2.draw(g);
-//		}
+		// if (secondBallActive == true) {
+		// snitch2.draw(g);
+		// }
 
 		for (Brick brick : bricks) {
 			brick.draw(g);
