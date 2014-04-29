@@ -1,6 +1,15 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
+
+//public class Brick extends GameObj {
+//	public static final int SIZE = 20;
+//	public static final int INIT_X = GameCourt.COURT_WIDTH/2;
+//	public static final int INIT_Y = GameCourt.COURT_HEIGHT + 10;
+//	public static final int INIT_VEL_X = 0;
+//	public static final int INIT_VEL_Y = 0;
+	
+	
 public class Brick extends Square {
 
 	Color color = Color.BLACK;

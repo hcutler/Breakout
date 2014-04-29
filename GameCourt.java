@@ -27,8 +27,8 @@ public class GameCourt extends JPanel {
 	private Background image;
 
 	// 2nd ball that shows up if active object is true
-	public boolean secondBallActive = false;
-	private Ball snitch2;
+	//public boolean secondBallActive = false;
+	//private Ball snitch2;
 
 	private int numOfBricksAcross = 17;
 	private int whiteSpaceAboveBricks = 50;
@@ -91,10 +91,10 @@ public class GameCourt extends JPanel {
 					paddle.v_x = -SQUARE_VELOCITY;
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 					paddle.v_x = SQUARE_VELOCITY;
-				else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-					paddle.v_y = SQUARE_VELOCITY;
-				else if (e.getKeyCode() == KeyEvent.VK_UP)
-					paddle.v_y = -SQUARE_VELOCITY;
+//				else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+//					paddle.v_y = SQUARE_VELOCITY;
+//				else if (e.getKeyCode() == KeyEvent.VK_UP)
+//					paddle.v_y = -SQUARE_VELOCITY;
 			}
 
 			public void keyReleased(KeyEvent e) {
@@ -216,46 +216,7 @@ public class GameCourt extends JPanel {
 				bricks.remove(brickToBeRemoved);
 			}
 
-			while (secondBallActive) {
-				// create 2nd ball
-				snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
-
-				// while active, do same thing for second ball
-				paddle.move();
-				snitch2.move();
-
-				if (snitch2.hitWall() != Direction.DOWN) {
-					// make the snitch bounce off walls...
-					snitch2.bounce(snitch2.hitWall());
-				}
-
-				else {
-					Game.lives -= 1;
-					// reset position here
-					snitch2.resetBallPosition();
-				}
-
-				// check for the game end conditions
-				// if (paddle.intersects(snitch) && willIntersect) {
-				if (paddle.intersects(snitch2)) {
-					snitch2.bounce(snitch2.hitObj(paddle));
-					// willIntersect = false;
-				}
-
-				// temporary brick
-				for (Brick brick : bricks) {
-					if (brick.intersects(snitch2)) {
-						brickToBeRemoved = brick;
-						snitch2.bounce(snitch2.hitObj(brick));
-						Game.score += 10;
-						Game.blocksLeft -= 1;
-					}
-				}
-				if (brickToBeRemoved != null) {
-					bricks.remove(brickToBeRemoved);
-				}
-			}
-
+//			
 			// when active object true,second ball has same properties as first
 			// ball
 			// if (secondBallActive == true) {
@@ -273,9 +234,10 @@ public class GameCourt extends JPanel {
 			// }
 
 			// Feature 1: 2 balls between 15-
-			if (Game.blocksLeft >= 150 && Game.blocksLeft <= 160) {
-				secondBallActive = true;
-			}
+
+//			if (Game.blocksLeft >= 150 && Game.blocksLeft <= 160) {
+//				secondBallActive = true;
+//			}
 
 			// Win vs. lose
 			if (Game.blocksLeft == 0) {
