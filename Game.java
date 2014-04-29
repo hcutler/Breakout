@@ -134,20 +134,21 @@ public class Game implements Runnable {
 		quit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// JFrame.EXIT_ON_CLOSE;
-				//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				System.exit(frame.EXIT_ON_CLOSE);
 			}
 		});
-		
-		
+
 		reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				blocksLeft = 170;
 				lives = 3;
 				score = 0;
-				
+
 				court.reset();
+
+
 			}
 		});
 
@@ -171,8 +172,8 @@ public class Game implements Runnable {
 	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Game());
-		
-        //add sound
-       		
+
+		// add sound
+
 	}
 }

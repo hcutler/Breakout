@@ -27,8 +27,8 @@ public class GameCourt extends JPanel {
 	private Background image;
 
 	// 2nd ball that shows up if active object is true
-	//public boolean secondBallActive = false;
-	//private Ball snitch2;
+	public boolean secondBallActive = false;
+	private Ball snitch2 = null;
 
 	private int numOfBricksAcross = 17;
 	private int whiteSpaceAboveBricks = 50;
@@ -91,10 +91,10 @@ public class GameCourt extends JPanel {
 					paddle.v_x = -SQUARE_VELOCITY;
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 					paddle.v_x = SQUARE_VELOCITY;
-//				else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-//					paddle.v_y = SQUARE_VELOCITY;
-//				else if (e.getKeyCode() == KeyEvent.VK_UP)
-//					paddle.v_y = -SQUARE_VELOCITY;
+				// else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+				// paddle.v_y = SQUARE_VELOCITY;
+				// else if (e.getKeyCode() == KeyEvent.VK_UP)
+				// paddle.v_y = -SQUARE_VELOCITY;
 			}
 
 			public void keyReleased(KeyEvent e) {
@@ -149,15 +149,22 @@ public class GameCourt extends JPanel {
 		image = new Background(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Ball(COURT_WIDTH, COURT_HEIGHT);
 
-		// if (secondBallActive == true) {
-		// snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
-		// }
+		if (secondBallActive == true) {
+			snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
+			secondBallActive = false;
+		}
 
 		playing = true;
 		status.setText("Game in progress...");
 
 		// Make sure that this component has the keyboard focus
 		requestFocusInWindow();
+
+		// clear
+		bricks = new ArrayList<Brick>();
+
+		setUpBricks();
+
 	}
 
 	// boolean to pre-check if intersection will occur
@@ -176,6 +183,10 @@ public class GameCourt extends JPanel {
 			paddle.move();
 			snitch.move();
 
+			if (snitch2 != null) {
+				snitch2.move();
+			}
+
 			if (snitch.hitWall() != Direction.DOWN) {
 				// make the snitch bounce off walls...
 				snitch.bounce(snitch.hitWall());
@@ -189,6 +200,21 @@ public class GameCourt extends JPanel {
 				snitch.resetBallPosition();
 
 			}
+			if (snitch2 != null) {
+				if (snitch2.hitWall() != Direction.DOWN) {
+					// make the snitch bounce off walls...
+					snitch2.bounce(snitch2.hitWall());
+					// ...and the mushroom
+
+				}
+
+				else {
+					Game.lives -= 1;
+					// reset position here
+					snitch2.resetBallPosition();
+
+				}
+			}
 
 			// if (paddle.willIntersect(snitch)) {
 			// willIntersect = true;
@@ -199,6 +225,13 @@ public class GameCourt extends JPanel {
 			if (paddle.intersects(snitch)) {
 				snitch.bounce(snitch.hitObj(paddle));
 				// willIntersect = false;
+			}
+
+			if (snitch2 != null) {
+				if (paddle.intersects(snitch2)) {
+					snitch.bounce(snitch2.hitObj(paddle));
+					// willIntersect = false;
+				}
 			}
 
 			// temporary brick
@@ -212,11 +245,15 @@ public class GameCourt extends JPanel {
 				}
 
 			}
+			
+			
+			
+			
 			if (brickToBeRemoved != null) {
 				bricks.remove(brickToBeRemoved);
 			}
 
-//			
+			//
 			// when active object true,second ball has same properties as first
 			// ball
 			// if (secondBallActive == true) {
@@ -235,9 +272,11 @@ public class GameCourt extends JPanel {
 
 			// Feature 1: 2 balls between 15-
 
-//			if (Game.blocksLeft >= 150 && Game.blocksLeft <= 160) {
-//				secondBallActive = true;
-//			}
+			if ((Game.blocksLeft >= 150 && Game.blocksLeft <= 160 || Game.blocksLeft >= 80
+					&& Game.blocksLeft <= 90)
+					&& snitch2 == null) {
+				secondBallActive = true;
+			}
 
 			// Win vs. lose
 			if (Game.blocksLeft == 0) {

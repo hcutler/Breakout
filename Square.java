@@ -18,8 +18,8 @@ public class Square extends GameObj {
 	public static final int INIT_VEL_X = 0;
 	public static final int INIT_VEL_Y = 0;
 	
-	public static int width;
-	public static int height;
+	public int width;
+	public int height;
 	
 
 	/**

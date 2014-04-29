@@ -23,8 +23,8 @@ public class Paddle extends Square {
 		// this.paddleWidth = paddleWidth;
 		// this.paddleHeight = paddleHeight;
 		//
-		// this.width = paddleWidth;
-		// this.height = paddleHeight;
+		 this.width = paddleWidth;
+		 this.height = paddleHeight;
 	}
 
 	// draw paddle
