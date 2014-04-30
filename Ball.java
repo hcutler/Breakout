@@ -14,7 +14,7 @@ import java.awt.*;
 public class Ball extends GameObj {
 
 	public static final int SIZE = 20;
-	public static final int INIT_POS_X = GameCourt.COURT_WIDTH/2;
+	public static final int INIT_POS_X = GameCourt.COURT_WIDTH/3;
 	public static final int INIT_POS_Y = GameCourt.COURT_HEIGHT/5 * 4;
 	public static final int INIT_VEL_X = 4;
 	public static final int INIT_VEL_Y = -5;
@@ -22,11 +22,13 @@ public class Ball extends GameObj {
 	public static int width;
 	public static int height;
 	
+	//private int id;
+	
 
-	public Ball(int courtWidth, int courtHeight) {
+	public Ball(int courtWidth, int courtHeight, int px, int py) {
 //		super(INIT_VEL_X, INIT_VEL_Y, INIT_POS_X, INIT_POS_Y, SIZE, SIZE,
 //				courtWidth, courtHeight);
-		super(INIT_VEL_X, INIT_VEL_Y, INIT_POS_X, INIT_POS_Y, SIZE, SIZE,
+		super(INIT_VEL_X, INIT_VEL_Y, px, py, SIZE, SIZE,
 				courtWidth, courtHeight);
 	}
 
@@ -46,21 +48,27 @@ public class Ball extends GameObj {
 
 	
 	public void intersectPaddle(Paddle paddle) {
-		if (this.willIntersect(paddle) && v_y >0) {
-		 v_y = -v_y;
+//		if (this.willIntersect(paddle) && v_y > 0) {
+//		 v_y = -v_y;
+//		}
+		
+		if ((pos_y + height) < (paddle.pos_y - paddle.height) && v_y > 0) {
+			v_y = -v_y;
 		}
 		
 		if ((pos_x + width) > (paddle.pos_x + paddle.width)) {
-			if (v_x <0) {
+			if (v_x < 0) {
 				v_x = -v_x +1;
+				v_y = -v_y +1;
 			}
 			else {
 				v_x +=1; //v_x++;
 			}
 		}
 		else if (pos_x < paddle.pos_x) {
-			if (v_x >0) {
-				v_x = -v_x -1;
+			if (v_x > 0) {
+				v_x = -v_x - 1;
+				v_y = -v_y + 1;
 			}
 			else {
 				v_x -= 1; //v_x --;
@@ -68,12 +76,12 @@ public class Ball extends GameObj {
 		}
 		
 	}
-	
+//	
 //	@Override
 //	public boolean intersects(GameObj obj) {
 //
 //		// get center of ball
-//		int ballRadius = width / 2;
+//		int ballRadius = width;
 //		Point ballCenter = new Point(pos_x + SIZE / 2, pos_y + SIZE / 2);
 //
 //		return ((ballCenter.y >= obj.pos_y - ballRadius)

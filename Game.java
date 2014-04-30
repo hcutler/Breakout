@@ -18,6 +18,7 @@ public class Game implements Runnable {
 	protected JLabel blocksLeftLabel;
 	protected JLabel livesLabel;
 	protected JLabel scoreLabel;
+	protected JLabel gameOver;
 
 	public static int blocksLeft = 170;
 	public static int lives = 3;
@@ -110,6 +111,10 @@ public class Game implements Runnable {
 		final JButton instructions = new JButton("Instructions");
 		final JButton quit = new JButton("Quit");
 
+
+		
+		
+		
 		instructions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 

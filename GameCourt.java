@@ -10,6 +10,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * GameCourt
@@ -23,18 +25,34 @@ public class GameCourt extends JPanel {
 
 	// the state of the game logic
 	private Paddle paddle; // the Black Square, keyboard control
-	private Ball snitch; // the Golden Snitch, bounces
+	// private Ball snitch; // the Golden Snitch, bounces
 	private Background image;
+	private PowerUp extraLife;
+	private PowerUp extendPaddle;
+
+	// private int dx;
+	// private int dy;
+	// private int x;
+	// private int y;
+
+	// private ArrayList bullets;
 
 	// 2nd ball that shows up if active object is true
-	public boolean secondBallActive = false;
-	private Ball snitch2 = null;
+
+	// public boolean secondBallActive; // = true;
+
+	// private Ball snitch2 = null;
+	// private Ball snitch2;
 
 	private int numOfBricksAcross = 17;
 	private int whiteSpaceAboveBricks = 50;
+	private int pointsPerBall = 50;
 
 	// store bricks in arraylist
 	ArrayList<Brick> bricks = new ArrayList<Brick>();
+
+	// arraylist for balls
+	Set<Ball> balls = new HashSet<Ball>();
 
 	public boolean playing = false; // whether the game is running
 	private JLabel status; // Current status text (i.e. Running...)
@@ -48,14 +66,17 @@ public class GameCourt extends JPanel {
 	// Update interval for timer, in milliseconds
 	public static final int INTERVAL = 35;
 
+	private int counter = 11;
+
 	private int spaceBetweenBricks = 4;
 	private int brickWidth = COURT_WIDTH
 			/ (numOfBricksAcross + spaceBetweenBricks);
-	private int brickHeight = 20;
+	private int brickHeight = 16;
 	private int whiteSpace = (COURT_WIDTH - (brickWidth + spaceBetweenBricks)
 			* numOfBricksAcross) / 2;
 
 	public GameCourt(JLabel status) {
+
 		// creates border around the court area, JComponent method
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
@@ -87,15 +108,22 @@ public class GameCourt extends JPanel {
 		// moves the square.)
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
+
+				// int key = e.getKeyCode();
+				//
+				// if (key == KeyEvent.VK_SPACE) {
+				// fire();
+				// }
+
 				if (e.getKeyCode() == KeyEvent.VK_LEFT)
 					paddle.v_x = -SQUARE_VELOCITY;
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 					paddle.v_x = SQUARE_VELOCITY;
-				// else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-				// paddle.v_y = SQUARE_VELOCITY;
-				// else if (e.getKeyCode() == KeyEvent.VK_UP)
-				// paddle.v_y = -SQUARE_VELOCITY;
 			}
+
+			// public void fire() {
+			// bullets.add(new Bullet(x + paddle.width/4, y + paddle.width/4));
+			// }
 
 			public void keyReleased(KeyEvent e) {
 				paddle.v_x = 0;
@@ -110,10 +138,14 @@ public class GameCourt extends JPanel {
 		// TODO Auto-generated method stub
 
 		for (int i = 0; i < numOfBricksAcross; i++) {
-			for (int j = 0; j < 10; j++) {
+			for (int j = 0; j < 8; j++) {
 				// set offset from top of screen on gctx
-				Brick brick = new Brick(COURT_WIDTH, COURT_HEIGHT, brickWidth,
-						brickHeight);
+				// Brick brick = new Brick(COURT_WIDTH, COURT_HEIGHT,
+				// brickWidth,
+				// brickHeight);
+
+				Brick brick = new Brick(0, 0, 0, 0, brickWidth, brickHeight,
+						COURT_WIDTH, COURT_HEIGHT);
 
 				brick.setPosition(i * (brickWidth + spaceBetweenBricks)
 						+ whiteSpace, j * (brickHeight + spaceBetweenBricks)
@@ -126,8 +158,6 @@ public class GameCourt extends JPanel {
 				} else if (j < 6) {
 					brick.setColor(Color.YELLOW);
 				} else if (j < 8) {
-					brick.setColor(Color.GREEN);
-				} else if (j < 10) {
 					brick.setColor(Color.DARK_GRAY);
 				}
 
@@ -135,7 +165,6 @@ public class GameCourt extends JPanel {
 			}
 
 		}
-		// System.out.println(whiteSpace);
 	}
 
 	/**
@@ -143,16 +172,26 @@ public class GameCourt extends JPanel {
 	 */
 	public void reset() {
 
-		paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 100, 30); // set width
-																	// and
-																	// height!
-		image = new Background(COURT_WIDTH, COURT_HEIGHT);
-		snitch = new Ball(COURT_WIDTH, COURT_HEIGHT);
+		// paddle = new Paddle(COURT_WIDTH, COURT_HEIGHT, 100, 16); // set width
+		// // and
+		// // height!
 
-		if (secondBallActive == true) {
-			snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT);
-			secondBallActive = false;
-		}
+		paddle = new Paddle(0, 0, COURT_WIDTH / 2, COURT_HEIGHT, 100, 16,
+				COURT_WIDTH, COURT_HEIGHT);
+
+		image = new Background(COURT_WIDTH, COURT_HEIGHT);
+		// snitch = new Ball(COURT_WIDTH, COURT_HEIGHT, Ball.INIT_POS_X,
+		// Ball.INIT_POS_Y);
+
+		// add ball to set
+		balls.add(new Ball(COURT_WIDTH, COURT_HEIGHT, Ball.INIT_POS_X,
+				Ball.INIT_POS_Y));
+
+		//
+		// if (secondBallActive == true) {
+		// snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT, 50, 20);
+		// secondBallActive = false;
+		// }
 
 		playing = true;
 		status.setText("Game in progress...");
@@ -163,6 +202,7 @@ public class GameCourt extends JPanel {
 		// clear
 		bricks = new ArrayList<Brick>();
 
+		// re-setup bricks
 		setUpBricks();
 
 	}
@@ -177,106 +217,159 @@ public class GameCourt extends JPanel {
 
 	void tick() {
 		if (playing) {
+
+			// powerup (extra life) every 11 bricks
+			if (extraLife == null && extendPaddle == null
+					&& (Game.score % 11 == 0 && Game.score != 0)) {
+				extraLife = new PowerUp(COURT_WIDTH, COURT_HEIGHT, true);
+			}
+
+			// powerup (long paddle) every 9 bricks
+			if (counter > 10 && extraLife == null && extendPaddle == null
+					&& (Game.score % 9 == 0 && Game.score != 0)) {
+				extendPaddle = new PowerUp(COURT_WIDTH, COURT_HEIGHT, false);
+			}
+			//
+			// if ((Game.blocksLeft >= 150 && Game.blocksLeft <= 160)
+			// && snitch2 == null) {
+			// secondBallActive = true;
+			// }
+			//
+
+			if (Game.score % pointsPerBall == 0 && Game.score != 0) {
+				balls.add(new Ball(COURT_WIDTH, COURT_HEIGHT, 50, 20));
+				pointsPerBall *= 8;
+				System.out.println(Game.score);
+				// snitch2 = new Ball(COURT_WIDTH, COURT_HEIGHT, 50, 20);
+				// secondBallActive = false;
+			}
+
 			// advance the square and snitch in their
 			// current direction.
+			// secondBallActive = true;
 
+			for (Ball b : balls) {
+				b.move();
+			}
 			paddle.move();
-			snitch.move();
 
-			if (snitch2 != null) {
-				snitch2.move();
-			}
+			//
+			// if (snitch2 != null) {
+			// snitch2.move();
+			// }
 
-			if (snitch.hitWall() != Direction.DOWN) {
-				// make the snitch bounce off walls...
-				snitch.bounce(snitch.hitWall());
-				// ...and the mushroom
+			ArrayList<Ball> toBeRemoved = new ArrayList<Ball>();
 
-			}
-
-			else {
-				Game.lives -= 1;
-				// reset position here
-				snitch.resetBallPosition();
-
-			}
-			if (snitch2 != null) {
-				if (snitch2.hitWall() != Direction.DOWN) {
+			for (Ball b : balls) {
+				if (b.hitWall() != Direction.DOWN || paddle.willIntersect(b)) {
 					// make the snitch bounce off walls...
-					snitch2.bounce(snitch2.hitWall());
+					b.bounce(b.hitWall());
 					// ...and the mushroom
 
 				}
 
 				else {
-					Game.lives -= 1;
-					// reset position here
-					snitch2.resetBallPosition();
 
+					if (balls.size() > 1) {
+						// REMOVE BALL
+						toBeRemoved.add(b);
+					} else {
+						Game.lives -= 1;
+						// reset position here
+						b.resetBallPosition();
+					}
 				}
+				// if (snitch2 != null) {
+				// if (snitch2.hitWall() != Direction.DOWN
+				// || paddle.willIntersect(snitch2)) {
+				// // make the snitch bounce off walls...
+				// snitch2.bounce(snitch2.hitWall());
+				// // ...and the mushroom
+				//
+				// }
+				//
+				// else {
+				// if (secondBallActive) {
+				// secondBallActive = false;
+				// } else {
+				// Game.lives -= 1;
+				// // reset position here
+				// snitch2.resetBallPosition();
+				// }
+				// }
 			}
 
-			// if (paddle.willIntersect(snitch)) {
-			// willIntersect = true;
-			// }
+			for (Ball b : toBeRemoved) {
+				balls.remove(b);
+			}
+			toBeRemoved = null;
+
+			// movement/collision for extraLife
+			if (extraLife != null && extraLife.isExtraLife) {
+				extraLife.move();
+				intersectPowerUp();
+			}
+
+			// movement/collision for extendPaddle
+			if (extendPaddle != null && !(extraLife.isExtraLife)) {
+				extendPaddle.move();
+				intersectPowerUp();
+			}
 
 			// check for the game end conditions
 			// if (paddle.intersects(snitch) && willIntersect) {
-			if (paddle.intersects(snitch)) {
-				snitch.bounce(snitch.hitObj(paddle));
-				// willIntersect = false;
-			}
 
-			if (snitch2 != null) {
-				if (paddle.intersects(snitch2)) {
-					snitch.bounce(snitch2.hitObj(paddle));
+			for (Ball b : balls) {
+				if (paddle.willIntersect(b)) {
+					b.bounce(b.hitObj(paddle));
 					// willIntersect = false;
 				}
 			}
 
+			// if (snitch2 != null) {
+			// if (paddle.willIntersect(snitch2)) {
+			// snitch2.bounce(snitch2.hitObj(paddle));
+			// // willIntersect = false;
+			// }
+			// }
+
 			// temporary brick
 			Brick brickToBeRemoved = null;
 			for (Brick brick : bricks) {
-				if (brick.intersects(snitch)) {
-					brickToBeRemoved = brick;
-					snitch.bounce(snitch.hitObj(brick));
-					Game.score += 10;
-					Game.blocksLeft -= 1;
+				for (Ball b : balls) {
+					if (brick.intersects(b)) {
+						brickToBeRemoved = brick;
+						b.bounce(b.hitObj(brick));
+						Game.score += 10;
+						Game.blocksLeft -= 1;
+					}
 				}
+				//
+				// if (snitch2 != null) {
+				// if (brick.intersects(snitch2)) {
+				// brickToBeRemoved = brick;
+				// snitch2.bounce(snitch2.hitObj(brick));
+				// Game.score += 10;
+				// Game.blocksLeft -= 1;
+				// }
+				//
+				// }
 
 			}
-			
-			
-			
-			
+
 			if (brickToBeRemoved != null) {
 				bricks.remove(brickToBeRemoved);
 			}
 
-			//
-			// when active object true,second ball has same properties as first
-			// ball
-			// if (secondBallActive == true) {
+			// Feature 1: 2 balls between 150-160 and 80-90 bricks left
+			// if ((Game.blocksLeft >= 150 && Game.blocksLeft <= 160 ||
+			// Game.blocksLeft >= 80
+			// && Game.blocksLeft <= 90)
+			// && snitch2 == null) {
 
+			// if (snitch2 == null) {
+			// secondBallActive = true;
 			// }
-
-			//
-			// // get center of ball
-			// int ballRadius = ball. / 2;
-			// Point ballCenter = new Point(pos_x + width / 2, pos_y + height /
-			// 2);
-			//
-			// if (ballCenter.y >= obj.pos_y - ballRadius) {
-			// Game.lives -= 1;
-			// }
-
-			// Feature 1: 2 balls between 15-
-
-			if ((Game.blocksLeft >= 150 && Game.blocksLeft <= 160 || Game.blocksLeft >= 80
-					&& Game.blocksLeft <= 90)
-					&& snitch2 == null) {
-				secondBallActive = true;
-			}
 
 			// Win vs. lose
 			if (Game.blocksLeft == 0) {
@@ -293,17 +386,52 @@ public class GameCourt extends JPanel {
 		}
 	}
 
+	public void intersectPowerUp() {
+		if (extraLife != null && extraLife.intersects(paddle)
+				&& extraLife.isExtraLife) {
+			Game.lives += 1;
+			extraLife = null;
+		}
+
+		if (extendPaddle != null && extendPaddle.intersects(paddle)
+				&& !(extraLife.isExtraLife)) {
+			int temp_width = paddle.width;
+			paddle.width = temp_width * 2;
+			counter = 0;
+			extendPaddle = null;
+		}
+		counter++;
+
+		if (counter == 10) {
+			int temp_width = paddle.width;
+			paddle.width = temp_width / 2;
+		}
+	}
+
 	// draws paddle/snitch on screen - put bricks here
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		image.draw(g);
 		paddle.draw(g);
-		snitch.draw(g);
 
-		// if (secondBallActive == true) {
+		// draw ball
+		for (Ball b : balls) {
+			b.draw(g);
+			// snitch.draw(g);
+		}
+
+		// if (snitch2 != null) {
 		// snitch2.draw(g);
 		// }
+
+		if (extraLife != null) {
+			extraLife.draw(g);
+		}
+
+		if (extendPaddle != null) {
+			extendPaddle.draw(g);
+		}
 
 		for (Brick brick : bricks) {
 			brick.draw(g);
@@ -315,6 +443,7 @@ public class GameCourt extends JPanel {
 			g.drawString("Lives Left: " + Game.lives, 330, 20);
 			g.drawString("Blocks Left: " + Game.blocksLeft, 560, 20);
 		}
+
 	}
 
 	@Override
